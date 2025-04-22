@@ -1,0 +1,5 @@
+ignore:
+  - ./internal/test/
+coverage:
+  status:
+    patch: off

@@ -1,0 +1,48 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/test.yaml"
+      - "go.mod"
+      - "go.sum"
+      - "taskfile.yaml"
+      - "**.go"
+      - "**.go.json"
+  pull_request:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/test.yaml"
+      - "go.mod"
+      - "go.sum"
+      - "taskfile.yaml"
+      - "**.go"
+      - "**.go.json"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go_version: ["~1.23", "~1.24"]
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          submodules: 'true'
+
+      - name: Install Go
+        uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5
+        with:
+          go-version: "${{ matrix.go_version }}"
+
+      - run: go test -coverpkg=./... -covermode=atomic -coverprofile=coverage.out -count=1 ./...
+
+      - uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d # v5
+        with:
+          files: coverage.out
+          token: ${{ secrets.CODECOV_TOKEN }}
