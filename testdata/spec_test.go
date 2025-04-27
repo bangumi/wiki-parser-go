@@ -20,13 +20,13 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/goccy/go-yaml"
 	"github.com/stretchr/testify/require"
-	"sigs.k8s.io/yaml"
 
 	wiki "github.com/bangumi/wiki-parser-go"
 )
 
-const testRoot = "./testdata/wiki-syntax-spec/tests/"
+const testRoot = "./wiki-syntax-spec/tests/"
 
 type Result struct {
 	Type string  `yaml:"type"`
