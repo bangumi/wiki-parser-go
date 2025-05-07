@@ -6,8 +6,8 @@ on:
       - master
     paths:
       - ".github/workflows/test.yaml"
-      - "go.mod"
-      - "go.sum"
+      - "**/go.mod"
+      - "**/go.sum"
       - "taskfile.yaml"
       - "**.go"
       - "**.go.json"
@@ -16,8 +16,8 @@ on:
       - master
     paths:
       - ".github/workflows/test.yaml"
-      - "go.mod"
-      - "go.sum"
+      - "**/go.mod"
+      - "**/go.sum"
       - "taskfile.yaml"
       - "**.go"
       - "**.go.json"

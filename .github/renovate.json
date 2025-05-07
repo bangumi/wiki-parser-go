@@ -4,5 +4,13 @@
     "local>trim21/renovate-config",
     "local>trim21/renovate-config:go",
     "local>trim21/renovate-config:lib"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "github.com/bangumi/wiki-parser-go"
+      ],
+      "enabled": false
+    }
   ]
 }
