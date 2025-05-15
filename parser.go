@@ -46,6 +46,7 @@ const suffix = "}}"
 
 //nolint:funlen,gocognit,gocyclo
 func Parse(s string) (Wiki, error) {
+	var originalInput = s
 	var w = Wiki{}
 	s, lineOffset := processInput(s)
 	if s == "" {
@@ -53,13 +54,21 @@ func Parse(s string) (Wiki, error) {
 	}
 
 	if !strings.HasPrefix(s, prefix) {
-		return Wiki{}, ErrGlobalPrefix
+		return Wiki{}, &SyntaxError{
+			Err:     ErrGlobalPrefix,
+			Lino:    lineOffset,
+			infobox: originalInput,
+		}
 	}
 
 	eolCount := strings.Count(s, "\n")
 
 	if !strings.HasSuffix(s, suffix) {
-		return Wiki{}, ErrGlobalSuffix
+		return Wiki{}, &SyntaxError{
+			Err:     ErrGlobalSuffix,
+			Lino:    lineOffset + eolCount,
+			infobox: originalInput,
+		}
 	}
 
 	w.Type = readType(s)
@@ -96,7 +105,7 @@ func Parse(s string) (Wiki, error) {
 			// can't find next line
 			if inArray {
 				// array should be close have read all contents
-				return Wiki{}, wrapError(ErrArrayNoClose, lino+1, s[secondLastEOL:lastEOL])
+				return Wiki{}, wrapError(ErrArrayNoClose, lino+1, s[secondLastEOL:lastEOL], originalInput)
 			}
 
 			break
@@ -112,12 +121,12 @@ func Parse(s string) (Wiki, error) {
 			// new field
 			currentField = Field{}
 			if inArray {
-				return Wiki{}, wrapError(ErrArrayNoClose, lino, line)
+				return Wiki{}, wrapError(ErrArrayNoClose, lino, line, originalInput)
 			}
 
 			key, value, err := readStartLine(trimLeftSpace(line[1:])) // read "key = value"
 			if err != nil {
-				return Wiki{}, wrapError(err, lino, line)
+				return Wiki{}, wrapError(err, lino, line, originalInput)
 			}
 
 			switch value {
@@ -150,7 +159,7 @@ func Parse(s string) (Wiki, error) {
 			// array item
 			key, value, err := readArrayItem(line)
 			if err != nil {
-				return Wiki{}, wrapError(err, lino, line)
+				return Wiki{}, wrapError(err, lino, line, originalInput)
 			}
 			itemContainer = append(itemContainer, Item{
 				Key:   key,
@@ -159,7 +168,7 @@ func Parse(s string) (Wiki, error) {
 		}
 
 		if !inArray {
-			return Wiki{}, wrapError(ErrExpectingNewField, lino, line)
+			return Wiki{}, wrapError(ErrExpectingNewField, lino, line, originalInput)
 		}
 	}
 
