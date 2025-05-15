@@ -15,6 +15,7 @@
 package wiki
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -32,6 +33,8 @@ type SyntaxError struct {
 }
 
 func (w *SyntaxError) ReadableError() string {
+	fmt.Println(w.Lino)
+
 	lines := strings.Split(w.infobox, "\n")
 	show := lines[max(w.Lino-3, 0) : w.Lino-1]
 
