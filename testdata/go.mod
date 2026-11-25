@@ -1,6 +1,6 @@
 module wiki
 
-go 1.23.0
+go 1.27.4
 
 require (
 	github.com/bangumi/wiki-parser-go v0.0.0
